@@ -66,7 +66,8 @@ export default function TrafficControlPage() {
                 <CardContent>
                   <div className="grid grid-cols-1 gap-8">
                     <div className="w-full border-2 rounded-md flex justify-center items-center h-[50vh]">
-                      Stream
+                    <span className="h-[12px] w-[12px] bg-red-500 rounded-full animate-pulse mr-2"></span>
+                      Live Video Stream
                     </div>
 
                     {/* Traffic Information */}

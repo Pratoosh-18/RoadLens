@@ -27,7 +27,11 @@ const StreamVideo = ({ activeModel }: StreamVideoProps) => {
   return (
     <div>
       {isBackendConnected && (
-        <img ref={imgRef} alt="Video Stream" className="max-h-[76vh] rounded" />
+        // <img ref={imgRef} alt="Video Stream" className="max-h-[76vh] rounded" />
+        <div className="border-2 m-3 rounded-md flex justify-center items-center h-[40vh]">
+          <span className="h-[12px] w-[12px] bg-red-500 rounded-full animate-pulse mr-2"></span>
+          Live Video Stream
+        </div>
       )}
 
       {!isBackendConnected && (
