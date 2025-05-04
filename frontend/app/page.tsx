@@ -36,8 +36,8 @@ export default function Home() {
             <Link href="#technology" className="text-sm font-medium hover:underline underline-offset-4">
               Technology
             </Link>
-            <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
-              Login
+            <Link href="/dashboard/traffic-control" className="text-sm font-medium hover:underline underline-offset-4">
+              Dashboard
             </Link>
             <ThemeToggle />
           </nav>
@@ -62,9 +62,9 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link href="/login">
+                  <Link href="/dashboard/traffic-control">
                     <Button className="bg-primary hover:bg-primary/90">
-                      Admin Login
+                      Dashboard
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -372,7 +372,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Link href="/login">
+                <Link href="/dashboard/traffic-control">
                   <Button className="bg-primary hover:bg-primary/90">
                     Get Started
                     <ArrowRight className="ml-2 h-4 w-4" />
