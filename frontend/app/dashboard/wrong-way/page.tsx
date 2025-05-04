@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
-import { VideoFeed } from "@/components/video-feed"
 import { Badge } from "@/components/ui/badge"
 import { CVModel } from "@/types"
 import { useAppContext } from "@/context/app-provider"

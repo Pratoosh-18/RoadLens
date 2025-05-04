@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
-import { VideoFeed } from "@/components/video-feed"
 import { Badge } from "@/components/ui/badge"
 import DetectionTable from "@/components/detection-table"
 import { useAppContext } from "@/context/app-provider"
@@ -20,7 +19,7 @@ export default function OverSpeedingPage() {
   const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
   const { detections } = useAppContext();
-  
+
   return (
     <div className="flex min-h-screen flex-col">
       <DashboardNavbar/>

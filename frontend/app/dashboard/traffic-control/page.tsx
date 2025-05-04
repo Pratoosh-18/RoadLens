@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Car, Clock, LogOut, LayoutDashboard } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,16 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { Sidebar } from "@/components/sidebar";
-import StreamVideo from "@/components/stream-video";
 import { useAppContext } from "@/context/app-provider";
 import { CVModel } from "@/types";
 import DashboardNavbar from "@/components/dashboard-navbar";
 
 export default function TrafficControlPage() {
   const router = useRouter();
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [activeModel, setActiveModel] = useState<CVModel>("trafficControl");
   const { detections } = useAppContext();
 
@@ -60,10 +55,6 @@ export default function TrafficControlPage() {
             <h1 className="text-xl font-bold md:text-2xl">Traffic Control</h1>
           </div>
           <Tabs defaultValue="monitoring">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-              <TabsTrigger value="statistics">Statistics</TabsTrigger>
-            </TabsList>
             <TabsContent value="monitoring" className="space-y-4">
               <Card className="w-full">
                 <CardHeader>
@@ -74,7 +65,9 @@ export default function TrafficControlPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 gap-8">
-                    <StreamVideo activeModel={activeModel} />
+                    <div className="w-full border-2 rounded-md flex justify-center items-center h-[50vh]">
+                      Stream
+                    </div>
 
                     {/* Traffic Information */}
                     <div className="grid gap-4 md:grid-cols-2">
@@ -166,100 +159,8 @@ export default function TrafficControlPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="statistics" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Traffic Flow Statistics</CardTitle>
-                  <CardDescription>
-                    Detailed traffic flow data over time
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[400px]">
-                    <TrafficFlowChart
-                      latestTrafficControlData={latestTrafficControlData}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
           </Tabs>
         </main>
-      </div>
-    </div>
-  );
-}
-
-function TrafficFlowChart(latestTrafficControlData: any) {
-  console.log(latestTrafficControlData);
-  return (
-    <div className="w-full h-full flex items-center justify-center p-7">
-      <div className="w-full h-full">
-        <div className="flex flex-col h-full">
-          <div className="flex justify-between items-center mb-4">
-            <div className="space-y-1">
-              <div className="text-sm font-medium">Traffic Flow</div>
-              <div className="text-2xl font-bold">Vehicles per Hour</div>
-            </div>
-            <div className="flex gap-2">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span className="text-xs">North</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <span className="text-xs">East</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-xs">South</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <span className="text-xs">West</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 relative">
-            {/* Simulated chart with lines */}
-            <div className="absolute inset-0">
-              <svg
-                className="w-full h-full"
-                viewBox="0 0 1000 400"
-                preserveAspectRatio="none"
-              >
-                {/* North line */}
-                <path
-                  d="M0,300 C100,280 200,150 300,180 C400,210 500,100 600,120 C700,140 800,200 900,150 L1000,150"
-                  fill="none"
-                  stroke="rgb(239, 68, 68)"
-                  strokeWidth="3"
-                />
-                {/* East line */}
-                <path
-                  d="M0,250 C100,230 200,200 300,220 C400,240 500,180 600,160 C700,140 800,180 900,200 L1000,180"
-                  fill="none"
-                  stroke="rgb(59, 130, 246)"
-                  strokeWidth="3"
-                />
-                {/* South line */}
-                <path
-                  d="M0,200 C100,220 200,240 300,200 C400,160 500,180 600,220 C700,260 800,240 900,180 L1000,200"
-                  fill="none"
-                  stroke="rgb(34, 197, 94)"
-                  strokeWidth="3"
-                />
-                {/* West line */}
-                <path
-                  d="M0,180 C100,200 200,220 300,240 C400,260 500,220 600,180 C700,140 800,160 900,220 L1000,240"
-                  fill="none"
-                  stroke="rgb(234, 179, 8)"
-                  strokeWidth="3"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

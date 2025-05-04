@@ -25,7 +25,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Sidebar } from "@/components/sidebar";
-import { VideoFeed } from "@/components/video-feed";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/app-provider";
 import StreamVideo from "@/components/stream-video";
