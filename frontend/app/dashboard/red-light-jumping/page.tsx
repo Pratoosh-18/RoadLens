@@ -15,6 +15,7 @@ import { CVModel } from "@/types";
 import { useAppContext } from "@/context/app-provider"
 import DetectionCards from "@/components/detection-cards"
 import DetectionTable from "@/components/detection-table"
+import DashboardNavbar from "@/components/dashboard-navbar"
 
 export default function RedLightJumpingPage() {
   const router = useRouter()
@@ -35,22 +36,7 @@ export default function RedLightJumpingPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-        <div className="flex items-center gap-2">
-          <LayoutDashboard className="h-6 w-6" />
-          <span className="text-lg font-bold">
-            <span className="text-primary">Road</span>
-            <span className="text-green-500">Lens</span>
-          </span>
-        </div>
-        <div className="ml-auto flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{currentTime.toLocaleTimeString()}</span>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+      <DashboardNavbar/>
       <div className="grid flex-1 items-start gap-4 p-4 md:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8 lg:p-8">
         <Sidebar />
         <main className="flex flex-col gap-4">
