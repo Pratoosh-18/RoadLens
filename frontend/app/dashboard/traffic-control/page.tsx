@@ -153,7 +153,6 @@ export default function TrafficControlPage() {
                           Cummulative Delay = Avg. waiting Time of Vehicle *
                           Total Vehicles
                         </h2>
-                        {/* <TrafficFlowChart latestTrafficControlData={latestTrafficControlData} /> */}
                       </Card>
                     </div>
                   </div>
