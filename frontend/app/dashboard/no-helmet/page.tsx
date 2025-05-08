@@ -166,18 +166,6 @@ export default function NoHelmetPage() {
                   <div className="space-y-4">
 
                     <DetectionTable detections={visibleDetections[activeModel]} />
-
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-muted-foreground">Showing 10 of 124 violations</div>
-                      <div className="flex gap-1">
-                        <Button variant="outline" size="sm" disabled>
-                          Previous
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Next
-                        </Button>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
