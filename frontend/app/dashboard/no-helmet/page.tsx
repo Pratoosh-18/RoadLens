@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Clock, LogOut, LayoutDashboard, AlertTriangle, FileText, Calendar } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -10,11 +10,12 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
 import StreamVideo from "@/components/stream-video"
-import { CVModel } from "@/types"
+import { CVModel, Detections } from "@/types"
 import { useAppContext } from "@/context/app-provider"
 import DetectionCards from "@/components/detection-cards"
 import DetectionTable from "@/components/detection-table"
 import DashboardNavbar from "@/components/dashboard-navbar"
+import { STATIC_DETECTIONS } from "@/constants/sample_constant_data"
 
 export default function NoHelmetPage() {
   const router = useRouter()
@@ -22,12 +23,62 @@ export default function NoHelmetPage() {
   const [activeModel, setActiveModel] = useState<CVModel>("noHelmet");
   const { detections } = useAppContext();
   console.log(detections)
-  const handleLogout = () => {
-    router.push("/")
-  }
+
+  const [visibleDetections, setVisibleDetections] = useState<Detections>({
+    redLightPassing: [],
+    noHelmet: [],
+    overspeeding: [],
+    wrongWay: [],
+    pothole: [],
+    vehicleFinder: [],
+    trafficControl: [],
+    personDetector: []
+  });
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 2;
+      videoRef.current.play();
+    }
+  }, []);
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    // Process each detection type
+    (Object.keys(STATIC_DETECTIONS) as CVModel[]).forEach(model => {
+      STATIC_DETECTIONS[model].forEach(detection => {
+        // Calculate when this detection should appear
+        const delay = detection.detectedAt - Date.now();
+
+        if (delay <= 0) {
+          // Show immediately if time has passed
+          setVisibleDetections(prev => ({
+            ...prev,
+            [model]: [...prev[model], detection]
+          }));
+        } else {
+          // Schedule for future appearance
+          const timer = setTimeout(() => {
+            setVisibleDetections(prev => ({
+              ...prev,
+              [model]: [...prev[model], detection]
+            }));
+          }, delay);
+          timers.push(timer);
+        }
+      });
+    });
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, []);
+
+
   return (
     <div className="flex min-h-screen flex-col">
-      <DashboardNavbar/>
+      <DashboardNavbar />
       <div className="grid flex-1 items-start gap-4 p-4 md:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8 lg:p-8">
         <Sidebar />
         <main className="flex flex-col gap-4">
@@ -72,7 +123,7 @@ export default function NoHelmetPage() {
                     <div className="space-y-2">
                       <div className="text-sm font-medium">Latest Detections:</div>
                       <div className="space-y-2">
-                        <DetectionCards detections={detections} activeModel="noHelmet" />
+                        <DetectionCards detections={visibleDetections} activeModel="noHelmet" />
                       </div>
                     </div>
 
@@ -86,7 +137,14 @@ export default function NoHelmetPage() {
                     <CardDescription>Monitoring for no helmet violations</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <StreamVideo activeModel={activeModel} />
+                    {/* <StreamVideo activeModel={activeModel} /> */}
+                    <video
+                      ref={videoRef}
+                      src="/sample_videos/no_helmet.mov"
+                      autoPlay
+                      muted
+                      className="w-full rounded-lg border"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center gap-2">
@@ -108,8 +166,8 @@ export default function NoHelmetPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    
-                    <DetectionTable detections={detections.noHelmet} />
+
+                    <DetectionTable detections={visibleDetections[activeModel]} />
 
                     <div className="flex justify-between items-center">
                       <div className="text-sm text-muted-foreground">Showing 10 of 124 violations</div>
