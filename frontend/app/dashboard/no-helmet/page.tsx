@@ -18,8 +18,6 @@ import DashboardNavbar from "@/components/dashboard-navbar"
 import { STATIC_DETECTIONS } from "@/constants/sample_constant_data"
 
 export default function NoHelmetPage() {
-  const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [activeModel, setActiveModel] = useState<CVModel>("noHelmet");
   const { detections } = useAppContext();
   console.log(detections)
@@ -39,7 +37,7 @@ export default function NoHelmetPage() {
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = 2;
+      videoRef.current.playbackRate = 4;
       videoRef.current.play();
     }
   }, []);
@@ -110,7 +108,7 @@ export default function NoHelmetPage() {
                         <div className="grid grid-cols-1 gap-4">
                           <Card>
                             <CardContent className="p-4 flex flex-col items-center justify-center">
-                              <span className="text-3xl font-bold">{detections.noHelmet.length}</span>
+                              <span className="text-3xl font-bold">{visibleDetections.noHelmet.length}</span>
                               <span className="text-xs text-muted-foreground">Violations Detected</span>
                             </CardContent>
                           </Card>
@@ -140,7 +138,7 @@ export default function NoHelmetPage() {
                     {/* <StreamVideo activeModel={activeModel} /> */}
                     <video
                       ref={videoRef}
-                      src="/sample_videos/no_helmet.mov"
+                      src="/sample_videos/no_helmet.mp4"
                       autoPlay
                       muted
                       className="w-full rounded-lg border"
