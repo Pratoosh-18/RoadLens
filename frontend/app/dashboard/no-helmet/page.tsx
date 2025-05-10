@@ -31,13 +31,6 @@ export default function NoHelmetPage() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 4;
-      videoRef.current.play();
-    }
-  }, []);
-
-  useEffect(() => {
     const timers: NodeJS.Timeout[] = [];
 
     // Process each detection type

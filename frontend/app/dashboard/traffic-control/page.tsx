@@ -19,18 +19,7 @@ export default function TrafficControlPage() {
 
   const mainVideoRef = useRef<HTMLVideoElement | null>(null);
   const statsVideoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    if (mainVideoRef.current) {
-      mainVideoRef.current.playbackRate = 4;
-      mainVideoRef.current.play();
-    }
-    if (statsVideoRef.current) {
-      statsVideoRef.current.playbackRate = 4;
-      statsVideoRef.current.play();
-    }
-  }, []);
-
+  
   return (
     <div className="flex min-h-screen flex-col">
       <DashboardNavbar />

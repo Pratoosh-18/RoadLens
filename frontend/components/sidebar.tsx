@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Car,
-  LayoutDashboard,
   AlertTriangle,
   Gauge,
   RouteIcon as Road,
@@ -44,24 +43,11 @@ export function Sidebar() {
       icon: Gauge,
       path: "/dashboard/over-speeding",
     },
-
-    // {
-    //   title: "Criminal Face Recognition",
-    //   icon: User,
-    //   path: "/dashboard/face-recognition",
-    // },
     {
       title: "Wrong Way Detection",
       icon: ArrowLeft,
       path: "/dashboard/wrong-way",
     },
-
-    {
-      title: "Person Finder",
-      icon: UserSearch,
-      path: "/dashboard/person-finder",
-    },
-
     {
       title: "Pothole Detection",
       icon: Road,
@@ -71,14 +57,6 @@ export function Sidebar() {
 
   return (
     <nav className="grid gap-2">
-      {/* <Button
-        variant={pathname === "/dashboard" ? "default" : "ghost"}
-        className="justify-start"
-        onClick={() => router.push("/dashboard")}
-      >
-        <LayoutDashboard className="mr-2 h-4 w-4" />
-        Dashboard
-      </Button> */}
       {menuItems.map((item) => {
         const isActive = pathname === item.path;
         return (
