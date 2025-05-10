@@ -7,10 +7,8 @@ import {
   AlertTriangle,
   Gauge,
   RouteIcon as Road,
-  User,
   ArrowLeft,
   Camera,
-  UserSearch,
 } from "lucide-react";
 
 export function Sidebar() {
