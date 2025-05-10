@@ -16,8 +16,6 @@ import StreamVideo from "@/components/stream-video"
 import DashboardNavbar from "@/components/dashboard-navbar"
 
 export default function OverSpeedingPage() {
-  const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
   const { detections } = useAppContext();
 
   return (

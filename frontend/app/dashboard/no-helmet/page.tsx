@@ -1,15 +1,10 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Clock, LogOut, LayoutDashboard, AlertTriangle, FileText, Calendar } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
-import StreamVideo from "@/components/stream-video"
 import { CVModel, Detections } from "@/types"
 import { useAppContext } from "@/context/app-provider"
 import DetectionCards from "@/components/detection-cards"
@@ -135,7 +130,6 @@ export default function NoHelmetPage() {
                     <CardDescription>Monitoring for no helmet violations</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    {/* <StreamVideo activeModel={activeModel} /> */}
                     <video
                       ref={videoRef}
                       src="/sample_videos/no_helmet.mp4"
