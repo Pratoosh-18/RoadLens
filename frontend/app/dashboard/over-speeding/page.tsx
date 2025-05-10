@@ -84,7 +84,13 @@ export default function OverSpeedingPage() {
                     <CardDescription>Monitoring for over-speeding vehicles</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <StreamVideo activeModel="overspeeding" />
+                  <video
+                      ref={videoRef}
+                      src="/sample_videos/red_light_jumping.mp4"
+                      autoPlay
+                      muted
+                      className="w-full rounded-lg border"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center gap-2">

@@ -10,7 +10,7 @@ import { useAppContext } from "@/context/app-provider"
 import DetectionCards from "@/components/detection-cards"
 import DetectionTable from "@/components/detection-table"
 import DashboardNavbar from "@/components/dashboard-navbar"
-import { STATIC_DETECTIONS } from "@/constants/sample_constant_data"
+import { STATIC_DETECTIONS } from "@/constants/sample_data_nohelmet"
 
 export default function NoHelmetPage() {
   const [activeModel, setActiveModel] = useState<CVModel>("noHelmet");
