@@ -24,5 +24,5 @@ export const STATIC_DETECTIONS: Detections = {
     ],
     trafficControl: [],
     personDetector: [],
-    redLightPassing: [],
+    redLightPassing: [] ,
 }
