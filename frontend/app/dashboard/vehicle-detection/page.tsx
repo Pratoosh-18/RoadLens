@@ -1,108 +1,71 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Clock,
-  LogOut,
-  LayoutDashboard,
-  Car,
-  FileText,
-  Calendar,
-  AlertTriangle,
-  Plus,
-  X,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState, useEffect, useRef } from "react";
+import { Car } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sidebar } from "@/components/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { useAppContext } from "@/context/app-provider";
-import StreamVideo from "@/components/stream-video";
 import DetectionTable from "@/components/detection-table";
 import DetectionCards from "@/components/detection-cards";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
 import DashboardNavbar from "@/components/dashboard-navbar";
+import { CVModel, Detections } from "@/types";
+import { STATIC_DETECTIONS } from "@/constants/sample_data_vehicle_finder";
 
 export default function CriminalVehiclePage() {
-  const router = useRouter();
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [plateNumber, setPlateNumber] = useState<string>("");
-  const { appData, detections } = useAppContext();
-  console.log(detections);
+  const { detections } = useAppContext();
+  const [activeModel, setActiveModel] = useState<CVModel>("vehicleFinder");
+  const [outlookVehicles, setOutlookVehicles] = useState(["R-183-JF", "L-656-XH"])
 
-  const handleAddVehicle = () => {
-    if (plateNumber.trim()) {
-      onAddVehicle(plateNumber);
-      setPlateNumber("");
-    }
-  };
+  const [visibleDetections, setVisibleDetections] = useState<Detections>({
+    redLightPassing: [],
+    noHelmet: [],
+    overspeeding: [],
+    wrongWay: [],
+    pothole: [],
+    vehicleFinder: [],
+    trafficControl: [],
+    personDetector: []
+  });
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleAddVehicle();
-    }
-  };
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const onAddVehicle = async () => {
-    if (plateNumber) {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/add-lookout-vehicle`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ lookoutVehicle: plateNumber.trim() }),
-        }
-      );
-
-      const data = await response.json();
-      console.log("Add Vehicle: ", data);
-    } else {
-      alert("Please enter a valid plate number.");
-    }
-  };
-  const onRemoveVehicle = async (vehiclePlate: string) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/remove-lookout-vehicle`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ lookoutVehicle: vehiclePlate }),
-      }
-    );
-
-    const data = await response.json();
-    console.log("Removed Vehicle: ", data);
-  };
-
-  // Update time every second
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const timers: NodeJS.Timeout[] = [];
 
-    return () => clearInterval(timer);
+    // Process each detection type
+    (Object.keys(STATIC_DETECTIONS) as CVModel[]).forEach(model => {
+      STATIC_DETECTIONS[model].forEach(detection => {
+        // Calculate when this detection should appear
+        const delay = detection.detectedAt - Date.now();
+
+        if (delay <= 0) {
+          // Show immediately if time has passed
+          setVisibleDetections(prev => ({
+            ...prev,
+            [model]: [...prev[model], detection]
+          }));
+        } else {
+          // Schedule for future appearance
+          const timer = setTimeout(() => {
+            setVisibleDetections(prev => ({
+              ...prev,
+              [model]: [...prev[model], detection]
+            }));
+          }, delay);
+          timers.push(timer);
+        }
+      });
+    });
+
+    return () => timers.forEach(timer => clearTimeout(timer));
   }, []);
-
-  const handleLogout = () => {
-    router.push("/");
-  };
 
   return (
     <div className="flex min-h-screen flex-col">
-      <DashboardNavbar/>
+      <DashboardNavbar />
       <div className="grid flex-1 items-start gap-4 p-4 md:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8 lg:p-8">
         <Sidebar />
         <main className="flex flex-col gap-4">
@@ -141,46 +104,20 @@ export default function CriminalVehiclePage() {
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 space-y-4">
-                          <div className="flex gap-2">
-                            <Input
-                              type="text"
-                              placeholder="Enter plate number"
-                              value={plateNumber}
-                              onChange={(e) => setPlateNumber(e.target.value)}
-                              onKeyPress={handleKeyPress}
-                              className="flex-1"
-                            />
-                            <Button
-                              onClick={handleAddVehicle}
-                              size="sm"
-                              className="whitespace-nowrap"
-                            >
-                              <Plus size={16} className="mr-1" /> Add Vehicle
-                            </Button>
-                          </div>
-
-                          {appData && appData.lookoutVehicles.length > 0 ? (
+                          {outlookVehicles && outlookVehicles.length > 0 ? (
                             <div className="space-y-2">
                               <div className="text-sm font-medium">
                                 Vehicles on lookout (
-                                {appData.lookoutVehicles.length})
+                                {outlookVehicles.length})
                               </div>
                               <div className="flex flex-wrap gap-2">
-                                {appData.lookoutVehicles.map((vehicle, i) => (
+                                {outlookVehicles.map((vehicle, i) => (
                                   <Badge
                                     key={`vehicle-${i}`}
                                     variant="secondary"
                                     className="flex items-center gap-1 py-1 px-3"
                                   >
                                     {vehicle}
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-4 w-4 rounded-full ml-1 p-0"
-                                      onClick={() => onRemoveVehicle(vehicle)}
-                                    >
-                                      <X size={12} />
-                                    </Button>
                                   </Badge>
                                 ))}
                               </div>
@@ -203,7 +140,7 @@ export default function CriminalVehiclePage() {
                         </div>
                         <div className="space-y-2">
                           <DetectionCards
-                            detections={detections}
+                            detections={visibleDetections}
                             activeModel="vehicleFinder"
                           />
                         </div>
@@ -221,7 +158,13 @@ export default function CriminalVehiclePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <StreamVideo activeModel="vehicleFinder" />
+                    <video
+                      ref={videoRef}
+                      src="/sample_videos/vehicle_finder.mp4"
+                      autoPlay
+                      muted
+                      className="w-full rounded-lg border"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center gap-2">
@@ -247,21 +190,7 @@ export default function CriminalVehiclePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <DetectionTable detections={detections.vehicleFinder} />
-
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-muted-foreground">
-                        Showing 10 of 32 detections
-                      </div>
-                      <div className="flex gap-1">
-                        <Button variant="outline" size="sm" disabled>
-                          Previous
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Next
-                        </Button>
-                      </div>
-                    </div>
+                    <DetectionTable detections={visibleDetections[activeModel]} />
                   </div>
                 </CardContent>
               </Card>
