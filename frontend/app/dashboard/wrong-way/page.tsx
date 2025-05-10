@@ -1,33 +1,69 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Clock, LogOut, LayoutDashboard, ArrowLeft, FileText, Calendar, AlertTriangle } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
-import { CVModel } from "@/types"
+import { CVModel, Detections } from "@/types"
 import { useAppContext } from "@/context/app-provider"
-import StreamVideo from "@/components/stream-video"
 import DetectionTable from "@/components/detection-table"
 import DetectionCards from "@/components/detection-cards"
 import DashboardNavbar from "@/components/dashboard-navbar"
+import { STATIC_DETECTIONS } from "@/constants/sample_data_wrongway"
 
 export default function WrongWayPage() {
-  const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [activeModel, setActiveModel] = useState<CVModel>("wrongWay");
   const { detections } = useAppContext();
-  const handleLogout = () => {
-    router.push("/")
-  }
+
+  const [visibleDetections, setVisibleDetections] = useState<Detections>({
+    redLightPassing: [],
+    noHelmet: [],
+    overspeeding: [],
+    wrongWay: [],
+    pothole: [],
+    vehicleFinder: [],
+    trafficControl: [],
+    personDetector: []
+  });
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    // Process each detection type
+    (Object.keys(STATIC_DETECTIONS) as CVModel[]).forEach(model => {
+      STATIC_DETECTIONS[model].forEach(detection => {
+        // Calculate when this detection should appear
+        const delay = detection.detectedAt - Date.now();
+
+        if (delay <= 0) {
+          // Show immediately if time has passed
+          setVisibleDetections(prev => ({
+            ...prev,
+            [model]: [...prev[model], detection]
+          }));
+        } else {
+          // Schedule for future appearance
+          const timer = setTimeout(() => {
+            setVisibleDetections(prev => ({
+              ...prev,
+              [model]: [...prev[model], detection]
+            }));
+          }, delay);
+          timers.push(timer);
+        }
+      });
+    });
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, []);
+
 
   return (
     <div className="flex min-h-screen flex-col">
-      <DashboardNavbar/>
+      <DashboardNavbar />
       <div className="grid flex-1 items-start gap-4 p-4 md:grid-cols-[240px_1fr] lg:grid-cols-[240px_1fr] lg:gap-8 lg:p-8">
         <Sidebar />
         <main className="flex flex-col gap-4">
@@ -59,7 +95,7 @@ export default function WrongWayPage() {
                         <div className="grid grid-cols-1 gap-4">
                           <Card>
                             <CardContent className="p-4 flex flex-col items-center justify-center">
-                              <span className="text-3xl font-bold">{detections.wrongWay.length}</span>
+                              <span className="text-3xl font-bold">{visibleDetections[activeModel].length}</span>
                               <span className="text-xs text-muted-foreground">Violations Detected</span>
                             </CardContent>
                           </Card>
@@ -78,7 +114,6 @@ export default function WrongWayPage() {
                           </div>
                           <div className="mt-2 text-xs">
                             <div className="flex items-center gap-1">
-                              <ArrowLeft className="h-3 w-3 text-muted-foreground" />
                               <span>Current view: Highway 101 - Exit 3 (One-way)</span>
                             </div>
                           </div>
@@ -88,7 +123,7 @@ export default function WrongWayPage() {
                       <div className="space-y-2">
                         <div className="text-sm font-medium">Latest Detections:</div>
                         <div className="space-y-2">
-                          <DetectionCards detections={detections} activeModel={activeModel} />
+                          <DetectionCards detections={visibleDetections} activeModel={activeModel} />
                         </div>
                       </div>
                     </div>
@@ -102,7 +137,13 @@ export default function WrongWayPage() {
                     <CardDescription>Monitoring for wrong way vehicles</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <StreamVideo activeModel="wrongWay" />
+                    <video
+                      ref={videoRef}
+                      src="/sample_videos/wrong_way.mp4"
+                      autoPlay
+                      muted
+                      className="w-full rounded-lg border"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center gap-2">
@@ -136,20 +177,7 @@ export default function WrongWayPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-
-                    <DetectionTable detections={detections.wrongWay}/>
-
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-muted-foreground">Showing 10 of 42 violations</div>
-                      <div className="flex gap-1">
-                        <Button variant="outline" size="sm" disabled>
-                          Previous
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Next
-                        </Button>
-                      </div>
-                    </div>
+                    <DetectionTable detections={visibleDetections[activeModel]} />
                   </div>
                 </CardContent>
               </Card>
@@ -160,102 +188,3 @@ export default function WrongWayPage() {
     </div>
   )
 }
-
-// Sample data for latest wrong way detections
-const latestWrongWayDetections = [
-  {
-    time: "30 min ago",
-    location: "Highway 101 - Exit 3 (One-way)",
-    vehicle: "Blue Sedan",
-    speed: "45",
-    licensePlate: "ABC-1234",
-  },
-  {
-    time: "2 hours ago",
-    location: "Main Street - One-way Section",
-    vehicle: "Red SUV",
-    speed: "32",
-    licensePlate: "XYZ-5678",
-  },
-  {
-    time: "3 hours ago",
-    location: "Downtown - One-way Loop",
-    vehicle: "Black Truck",
-    speed: "28",
-    licensePlate: "DEF-9012",
-  },
-]
-
-// Sample data for wrong way history
-const wrongWayHistory = [
-  {
-    time: "Today, 9:30 AM",
-    location: "Highway 101 - Exit 3 (One-way)",
-    vehicle: "Blue Sedan",
-    licensePlate: "ABC-1234",
-    speed: "45",
-  },
-  {
-    time: "Today, 8:15 AM",
-    location: "Main Street - One-way Section",
-    vehicle: "Red SUV",
-    licensePlate: "XYZ-5678",
-    speed: "32",
-  },
-  {
-    time: "Today, 7:05 AM",
-    location: "Downtown - One-way Loop",
-    vehicle: "Black Truck",
-    licensePlate: "DEF-9012",
-    speed: "28",
-  },
-  {
-    time: "Yesterday, 5:45 PM",
-    location: "North Avenue - One-way",
-    vehicle: "White Van",
-    licensePlate: "GHI-3456",
-    speed: "38",
-  },
-  {
-    time: "Yesterday, 3:20 PM",
-    location: "East Boulevard - One-way",
-    vehicle: "Gray Sedan",
-    licensePlate: "JKL-7890",
-    speed: "42",
-  },
-  {
-    time: "Oct 15, 2023",
-    location: "South Street - One-way",
-    vehicle: "Silver SUV",
-    licensePlate: "MNO-1234",
-    speed: "35",
-  },
-  {
-    time: "Oct 15, 2023",
-    location: "West Road - One-way",
-    vehicle: "Black Sedan",
-    licensePlate: "PQR-5678",
-    speed: "30",
-  },
-  {
-    time: "Oct 14, 2023",
-    location: "Highway 101 - Exit 5 (One-way)",
-    vehicle: "Blue Hatchback",
-    licensePlate: "STU-9012",
-    speed: "48",
-  },
-  {
-    time: "Oct 14, 2023",
-    location: "Central Avenue - One-way",
-    vehicle: "Red Pickup",
-    licensePlate: "VWX-3456",
-    speed: "33",
-  },
-  {
-    time: "Oct 13, 2023",
-    location: "Downtown - One-way Loop",
-    vehicle: "Green SUV",
-    licensePlate: "YZA-7890",
-    speed: "25",
-  },
-]
