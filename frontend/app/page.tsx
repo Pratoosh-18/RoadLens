@@ -36,7 +36,10 @@ export default function Home() {
             <Link href="#technology" className="text-sm font-medium hover:underline underline-offset-4">
               Technology
             </Link>
-            <Link href="/dashboard/traffic-control" className="text-sm font-medium hover:underline underline-offset-4">
+            <Link
+              href="/dashboard/traffic-control"
+              className="text-sm font-medium bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:bg-primary/90 transition-colors"
+            >
               Dashboard
             </Link>
             <ThemeToggle />
@@ -44,6 +47,17 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
+        <div className="fixed bottom-6 right-6 z-50 shadow-lg rounded-full">
+          <Link href="/dashboard/traffic-control">
+            <Button
+              size="lg"
+              className="rounded-full bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-6 flex items-center gap-2"
+            >
+              <span>Try Demo</span>
+              <ArrowRight className="h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-background to-background/80">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
@@ -63,9 +77,12 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Link href="/dashboard/traffic-control">
-                    <Button className="bg-primary hover:bg-primary/90">
-                      Dashboard
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button size="lg" className="bg-primary hover:bg-primary/90 relative overflow-hidden group">
+                      <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                      <span className="relative flex items-center">
+                        View Dashboard
+                        <ArrowRight className="ml-2 h-4 w-4 animate-pulse" />
+                      </span>
                     </Button>
                   </Link>
                   <Button variant="outline">Learn More</Button>
@@ -82,14 +99,12 @@ export default function Home() {
                         <p className="text-muted-foreground max-w-[400px] mx-auto">
                           Comprehensive AI-powered system with 8 advanced features for safer, more efficient roads
                         </p>
-                        <div className="flex justify-center">
-                          <Link href="#features">
-                            <Button variant="outline" className="mt-2">
-                              Explore Features
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </Link>
-                        </div>
+                        <Link href="/dashboard/traffic-control">
+                          <Button variant="outline" className="mt-2">
+                            See Demo
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -98,6 +113,20 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <div className="w-full bg-primary/10 py-4 border-y border-primary/20">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+              <p className="text-lg font-medium">Want to see these features in action?</p>
+              <Link href="/dashboard/traffic-control">
+                <Button className="bg-primary hover:bg-primary/90">
+                  Check out our interactive demo
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
 
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
           <div className="container px-4 md:px-6">
@@ -373,8 +402,8 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/dashboard/traffic-control">
-                  <Button className="bg-primary hover:bg-primary/90">
-                    Get Started
+                  <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    Try the Demo Dashboard
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -394,6 +423,13 @@ export default function Home() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">Real-Time Road Intelligence, Redefined.</p>
+            <Link
+              href="/dashboard/traffic-control"
+              className="inline-flex items-center mt-2 text-sm font-medium text-primary hover:underline"
+            >
+              Try our interactive demo
+              <ArrowRight className="ml-1 h-3 w-3" />
+            </Link>
           </div>
           <div className="ml-auto grid gap-8 sm:grid-cols-3">
             <div className="grid gap-2">
