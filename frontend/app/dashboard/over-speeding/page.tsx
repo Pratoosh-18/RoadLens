@@ -11,6 +11,7 @@ import DetectionCards from "@/components/detection-cards"
 import DashboardNavbar from "@/components/dashboard-navbar"
 import { CVModel, Detections } from "@/types"
 import { STATIC_DETECTIONS } from "@/constants/sample_data_overspeeding"
+import DashboardFooter from "@/components/dashboard-footer"
 
 export default function OverSpeedingPage() {
   const { detections } = useAppContext();
@@ -162,6 +163,7 @@ export default function OverSpeedingPage() {
           </Tabs>
         </main>
       </div>
+      <DashboardFooter />
     </div>
   )
 }
