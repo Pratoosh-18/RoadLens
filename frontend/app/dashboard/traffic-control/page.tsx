@@ -15,7 +15,6 @@ import DashboardNavbar from "@/components/dashboard-navbar";
 
 export default function TrafficControlPage() {
   const { detections } = useAppContext();
-  console.log(detections)
 
   const mainVideoRef = useRef<HTMLVideoElement | null>(null);
   const statsVideoRef = useRef<HTMLVideoElement | null>(null);

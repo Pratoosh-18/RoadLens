@@ -1,30 +1,67 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Clock, LogOut, LayoutDashboard, RouteIcon as Road, FileText, Calendar, MapPin, Camera } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar } from "@/components/sidebar"
 import { Badge } from "@/components/ui/badge"
 import { useAppContext } from "@/context/app-provider"
-import StreamVideo from "@/components/stream-video"
 import DetectionCards from "@/components/detection-cards"
 import DetectionTable from "@/components/detection-table"
 import MapWithMarkers from "@/components/map-with-markers"
 import DashboardNavbar from "@/components/dashboard-navbar"
+import { CVModel, Detections } from "@/types"
+import { STATIC_DETECTIONS } from "@/constants/sample_data_pothole"
 
 export default function PotholeDetectionPage() {
-  const router = useRouter()
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [activeModel, setActiveModel] = useState<CVModel>("pothole");
   const { detections } = useAppContext();
-  console.log(detections)
 
-  const handleLogout = () => {
-    router.push("/")
-  }
+  const [visibleDetections, setVisibleDetections] = useState<Detections>({
+    redLightPassing: [],
+    noHelmet: [],
+    overspeeding: [],
+    wrongWay: [],
+    pothole: [],
+    vehicleFinder: [],
+    trafficControl: [],
+    personDetector: []
+  });
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = [];
+
+    // Process each detection type
+    (Object.keys(STATIC_DETECTIONS) as CVModel[]).forEach(model => {
+      STATIC_DETECTIONS[model].forEach(detection => {
+        // Calculate when this detection should appear
+        const delay = detection.detectedAt - Date.now();
+
+        if (delay <= 0) {
+          // Show immediately if time has passed
+          setVisibleDetections(prev => ({
+            ...prev,
+            [model]: [...prev[model], detection]
+          }));
+        } else {
+          // Schedule for future appearance
+          const timer = setTimeout(() => {
+            setVisibleDetections(prev => ({
+              ...prev,
+              [model]: [...prev[model], detection]
+            }));
+          }, delay);
+          timers.push(timer);
+        }
+      });
+    });
+
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -60,7 +97,7 @@ export default function PotholeDetectionPage() {
                         <div className="grid grid-cols-1 gap-4">
                           <Card>
                             <CardContent className="p-4 flex flex-col items-center justify-center">
-                              <span className="text-3xl font-bold">{detections.pothole.length}</span>
+                              <span className="text-3xl font-bold">{visibleDetections.pothole.length}</span>
                               <span className="text-xs text-muted-foreground">Potholes Detected</span>
                             </CardContent>
                           </Card>
@@ -71,45 +108,7 @@ export default function PotholeDetectionPage() {
                         <div className="text-sm font-medium">Latest Detections:</div>
                         <div className="space-y-2">
                           <div className="grid grid-cols-1 gap-4">
-                            {detections.pothole.map((detection: any) => {
-                              const detectedDate = new Date(detection.detectedAt);
-                              const formattedDate = detectedDate.toLocaleString();
-                              return (
-                                <Card
-                                  key={detection.id}
-                                  className="flex flex-col md:flex-row shadow-md hover:shadow-lg transition rounded-xl overflow-hidden"
-                                >
-                                  <div className="md:w-1/2 bg-muted">
-                                    <img
-                                      className="w-full h-64 object-cover"
-                                      src={`data:image/jpg;base64,${detection.imgSrc}`}
-                                      alt="Detection"
-                                    />
-                                  </div>
-
-                                  <div className="md:w-1/2 flex flex-col justify-between p-4 space-y-4">
-                                    <div className="space-y-1">
-                                      <p className="text-sm text-muted-foreground">{formattedDate}</p>
-                                      <Badge variant="default" className="text-sm px-3 py-1 rounded-full">
-                                        {detection.className}
-                                      </Badge>
-                                    </div>
-
-                                    <div className="rounded overflow-hidden shadow-sm h-40 border">
-                                      <iframe
-                                        title={`Map-${detection.id}`}
-                                        width="100%"
-                                        height="100%"
-                                        frameBorder="0"
-                                        style={{ border: 0 }}
-                                        src={`https://maps.google.com/maps?q=${detection.coordinate.lat},${detection.coordinate.long}&z=15&output=embed`}
-                                        allowFullScreen
-                                      ></iframe>
-                                    </div>
-                                  </div>
-                                </Card>
-                              );
-                            })}
+                          <DetectionCards detections={visibleDetections} activeModel="pothole" />
                           </div>
                         </div>
                       </div>
@@ -124,7 +123,13 @@ export default function PotholeDetectionPage() {
                     <CardDescription>Mobile camera scanning for potholes</CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <StreamVideo activeModel="pothole" />
+                  <video
+                      ref={videoRef}
+                      src="/sample_videos/pothole.mp4"
+                      autoPlay
+                      muted
+                      className="w-full rounded-lg border"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center gap-2">
@@ -161,20 +166,7 @@ export default function PotholeDetectionPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    
-                    <DetectionTable detections={detections.pothole} />
-
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm text-muted-foreground">Showing 10 of 42 potholes</div>
-                      <div className="flex gap-1">
-                        <Button variant="outline" size="sm" disabled>
-                          Previous
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          Next
-                        </Button>
-                      </div>
-                    </div>
+                    <DetectionTable detections={visibleDetections[activeModel]} />
                   </div>
                 </CardContent>
               </Card>

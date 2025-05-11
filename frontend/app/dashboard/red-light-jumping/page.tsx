@@ -18,8 +18,7 @@ import { STATIC_DETECTIONS } from "@/constants/sample_data_redlightpassing"
 export default function RedLightJumpingPage() {
   const { detections } = useAppContext();
   const [activeModel, setActiveModel] = useState<CVModel>("redLightPassing");
-  console.log(detections)
-
+  
   const [visibleDetections, setVisibleDetections] = useState<Detections>({
     redLightPassing: [],
     noHelmet: [],

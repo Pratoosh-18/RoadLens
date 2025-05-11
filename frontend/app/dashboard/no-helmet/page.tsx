@@ -15,7 +15,6 @@ import { STATIC_DETECTIONS } from "@/constants/sample_data_nohelmet"
 export default function NoHelmetPage() {
   const [activeModel, setActiveModel] = useState<CVModel>("noHelmet");
   const { detections } = useAppContext();
-  console.log(detections)
 
   const [visibleDetections, setVisibleDetections] = useState<Detections>({
     redLightPassing: [],
