@@ -163,7 +163,6 @@ export default function OverSpeedingPage() {
           </Tabs>
         </main>
       </div>
-      <DashboardFooter />
     </div>
   )
 }

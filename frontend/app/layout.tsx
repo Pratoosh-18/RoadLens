@@ -2,6 +2,7 @@ import type React from "react";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import ContextProviders from "@/context";
+import DashboardFooter from "@/components/dashboard-footer";
 
 export const metadata = {
   title: "RoadLens - Smart Traffic Monitoring System",
@@ -27,6 +28,7 @@ export default function RootLayout({
           <ContextProviders>{children}</ContextProviders>
         </ThemeProvider>
       </body>
+      <DashboardFooter/>
     </html>
   );
 }

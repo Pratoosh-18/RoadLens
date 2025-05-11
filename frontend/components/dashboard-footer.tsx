@@ -16,7 +16,7 @@ export default function DashboardFooter() {
         
         <div className="mt-4 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground">
           <div>
-            <p>Traffic Monitoring System &copy; {new Date().getFullYear()}</p>
+            <p>RoadLens&copy; {new Date().getFullYear()}</p>
           </div>
           <div className="mt-2 md:mt-0">
             <p className="text-center md:text-right">
