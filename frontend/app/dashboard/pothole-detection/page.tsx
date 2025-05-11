@@ -158,7 +158,6 @@ export default function PotholeDetectionPage() {
                         </div>
                       </div>
                     </div>
-                    <MapWithMarkers potholes={detections.pothole} />
                   </CardContent>
                 </Card>
               </div>
