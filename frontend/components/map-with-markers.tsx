@@ -16,12 +16,10 @@ interface MapProps {
 export default function MapWithMarkers({ potholes }: MapProps) {
   const center = useMemo(() => potholes.length > 0
     ? { lat: potholes[0].coordinate.lat, lng: potholes[0].coordinate.long }
-    : { lat: 20.5937, lng: 78.9629 }, // Default: India
+    : { lat: 20.5937, lng: 78.9629 },
   [potholes])
 
   const { isLoaded } = useJsApiLoader({
-    // googleMapsApiKey: "AIzaSyAbMfem268_U8kIr4At-QpqFVW8_2Y4diI&map_ids=3e66a97b95b17f86",
-    // googleMapsApiKey: "AIzaSyAbMfem268_U8kIr4At-QpqFVW8_2Y4diI",
     googleMapsApiKey: "",
   })
 
